@@ -28,7 +28,14 @@ if __name__ == '__main__':
 
     #
     Li = f2.init_left(H, G)
+    Ri = f2.init_right(H, G)
 
+    Dm = np.zeros((height, width))
+    print('All initialized. Starting depthmap reconstruciton...')
 
+    for i in tqdm(range(0, height)):
+        for j in range(0, width):
+            for d in range(0, MAX_DISP+1):
+                Dm[i, j] += H[i,j,d]*( Li[i,j,d] + Ri[i,j,d] )
 
-
+    imsave("imgs/result.png", Dm, cmap='gray')
