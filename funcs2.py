@@ -55,3 +55,31 @@ def left(i, j, d, Li, H, G):
             res += H[i, j, _d]*G[d, _d]*temp + Li[i, j-1, _d]
 
         return res
+
+    
+@njit
+def init_right(H, G):
+    height, width, maxD = H.shape[0], H.shape[1], H.shape[2] - 1
+    Ri = np.zeros((height, width, maxD + 1, width))
+
+    print(f"Ri initialising...")
+    for i in range(0, height):
+        for j in range(0, width):
+            for d in range(0, maxD):
+                Ri[i, j, d] = right(i, j, d, Ri, H, G, Ri[i, j, d])
+
+
+@njit
+def right(i, j, d, Ri, H, G, res):
+    height, width, maxD = H.shape[0], H.shape[1], H.shape[2] - 1
+
+    if j == width:
+        return np.zeros(width)
+    else:
+        temp = np.zeros(width)
+
+        for _d in range(0, maxD + 1):
+            temp[j + 1] = _d
+            res += H[i, j, _d] * G[d, _d] * temp + Ri[i, j + 1, _d]
+
+        return res
