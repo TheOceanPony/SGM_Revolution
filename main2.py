@@ -13,29 +13,18 @@ if __name__ == '__main__':
     C = 0
 
     # Reading imgs
-    img_L = (rgb2gray( imread("imgs/im0.png")))
-    img_R = (rgb2gray( imread("imgs/im1.png")))
-
-    #img_L = img_L[300:900, 300:900]
-    #img_R = img_R[300:900, 300:900]
+    img_L = (rgb2gray( imread("imgs/im0.png")[100:200, 100:200]))
+    img_R = (rgb2gray( imread("imgs/im1.png")[100:200, 100:200]))
 
     height, width = img_L.shape
-    #print(f"Img info - shape: {width, height}, max el: {np.max(img_L)}, dtype: {img_L.dtype}")
-
-    # Initialise
-    H = f2.init_unary(MAX_DISP, img_L, img_R, C)
-    G = f2.init_binary(MAX_DISP, alpha, C)
-
-    #
-    Li = f2.init_left(H, G)
-    Ri = f2.init_right(H, G)
+    print(f"Img info - shape: {width, height}, max el: {np.max(img_L)}, dtype: {img_L.dtype}")
 
     Dm = np.zeros((height, width))
-    print('All initialized. Starting depthmap reconstruciton...')
+    for row in tqdm(range(0, height)):
+        Dm[row, :] = f2.magic(img_L, img_R, row, MAX_DISP)
 
-    for i in tqdm(range(0, height)):
-        for j in range(0, width):
-            for d in range(0, MAX_DISP+1):
-                Dm[i, j] += H[i,j,d]*( Li[i,j,d] + Ri[i,j,d] )
-
-    imsave("imgs/result.png", Dm, cmap='gray')
+    Dm = Dm * (np.max(Dm) / MAX_DISP)
+    print(np.max(Dm), Dm.shape)
+    imsave("imgs/out/result.png", Dm)
+    imsave("imgs/out/L.png", img_L)
+    imsave("imgs/out/R.png", img_R)
