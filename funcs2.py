@@ -76,11 +76,3 @@ def p2(k, maxD, i, j, imL, imR, a, b, c):
         w[_k] = np.exp(c - a*abs( k - _k )) * np.exp(c - b*abs(imL[i, j] - imR[i, j - _k]))
 
     return w/np.sum(w)
-
-
-
-
-
-
-
-
