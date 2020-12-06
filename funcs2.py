@@ -42,13 +42,15 @@ def P_init(H, G):
 
                     P[i, j, k1, k2] = H[i, j, k2]*G[k1, k2] # k1 <-> k2 ?
 
+                P[i, j,  k1] = P[i, j,  k1]/(P[i, j,  k1]).sum()
+
     return P
 
 
 @njit
-def magic(i, width, maxD, P):
+def magic(i, width, maxD, F, P, Res):
 
-    F = np.zeros((maxD + 1, width), dtype=np.float64)
+    F.fill(0)
     for iteration in range(1, width):
         F[:, -iteration] = np.arange(0, maxD + 1)
         F2 = F.copy()
@@ -60,11 +62,11 @@ def magic(i, width, maxD, P):
 
         F = F2.copy()
 
-    res = np.zeros(width, dtype=np.float64)
+    Res.fill(0)
     for k1 in range(0, maxD + 1):
-        res += (1 / (maxD + 1)) * F[k1]
+        Res += (1 / (maxD + 1)) * F[k1]
 
-    return res
+    return Res
 
 
 @njit
@@ -74,3 +76,11 @@ def p2(k, maxD, i, j, imL, imR, a, b, c):
         w[_k] = np.exp(c - a*abs( k - _k )) * np.exp(c - b*abs(imL[i, j] - imR[i, j - _k]))
 
     return w/np.sum(w)
+
+
+
+
+
+
+
+
