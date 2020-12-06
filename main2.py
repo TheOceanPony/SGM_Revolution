@@ -2,21 +2,26 @@ import numpy as np
 from tqdm import tqdm
 from skimage.io import imread, imsave
 from skimage.color import rgb2gray
+from skimage.transform import rescale, downscale_local_mean
 
 import funcs2 as f2
 
 
-if __name__ == '__main__':
-
+def main(maxD, a, b):
     # Params
-    maxD = 5
-    alpha = 2.5
-    beta = 50
+    maxD = 10
+    alpha = a
+    beta = b
+    fname = f"imgs/cloth/maxD:{maxD},a:{alpha},b:{beta}.png"
     C = 0
 
     # Reading imgs
-    img_L = (rgb2gray( (imread("imgs/im0.png")) ))
-    img_R = (rgb2gray( (imread("imgs/im1.png")) ))
+    img_L = (rgb2gray( (imread("imgs/im0_cloth.png")) ))
+    img_R = (rgb2gray( (imread("imgs/im1_cloth.png")) ))
+
+    img_L = downscale_local_mean(img_L, (4, 4))
+    img_R = downscale_local_mean(img_R, (4, 4))
+
 
     height, width = img_L.shape
     print(f"Img info - shape: {width, height}, max el: {np.max(img_L)}, dtype: {img_L.dtype}")
@@ -35,4 +40,9 @@ if __name__ == '__main__':
 
     Dm = Dm/Dm.max()
     print(np.max(Dm), np.min(Dm), Dm.shape)
-    imsave("imgs/out/result_a2.png", Dm)
+    imsave(fname, Dm)
+    #imsave("imgs/out/L.png", img_L)
+    #imsave("imgs/out/R.png", img_R)
+
+
+main(5, 2, 50)
