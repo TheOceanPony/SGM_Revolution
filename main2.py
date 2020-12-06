@@ -31,6 +31,6 @@ if __name__ == '__main__':
     for row in tqdm(range(0, height)):
         Dm[row, :] = f2.magic(row, width, maxD, P)
 
-    # Dm = Dm * (np.max(Dm) / maxD)
+    Dm = Dm/Dm.max
     print(np.max(Dm), np.min(Dm), Dm.shape)
     imsave("imgs/out/result_a2.png", Dm)
